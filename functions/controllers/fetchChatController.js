@@ -46,20 +46,21 @@ exports.fetchChatHistory = onCall(async (props) => {
       throw new https.HttpsError('not-found', 'Document history not-found');
     }
 
-    const Wholehistory = [];
+    const WholeDocs = [];
     fetchChatHistoryRef.forEach((doc) => {
-      Wholehistory.push({ id: doc.id, ...doc.data() });
+      WholeDocs.push({ id: doc.id, ...doc.data() });
     });
 
     const extractChatLogs = (docs) => {
       const result = [];
 
       docs.forEach((doc) => {
-        const { id, messages } = doc;
+        const { id, user, messages } = doc;
 
         messages.forEach((message) => {
           result.push({
             docId: id,
+            user: user.id,
             timestamp: new Date(
               message.timestamp._seconds * 1000 +
                 message.timestamp._nanoseconds / 1000000
@@ -73,7 +74,7 @@ exports.fetchChatHistory = onCall(async (props) => {
       return result;
     };
 
-    const history = extractChatLogs(Wholehistory);
+    const history = extractChatLogs(WholeDocs);
 
     DEBUG && logger.log('Fetch Chat History: ', history);
 
@@ -91,60 +92,3 @@ exports.fetchChatHistory = onCall(async (props) => {
     throw new HttpsError('internal', error.message);
   }
 });
-
-// const fetchChatHistory = onCall(async (props) => {
-//   try {
-//     // Error from getFirestore(), ''
-//     const db = getFirestore();
-//     DEBUG && logger.log('Communicator started, data:', props.data);
-
-//     const { user } = props.data;
-
-//     if (!user) {
-//       logger.log('Missing required fields', props.data);
-//       throw new HttpsError('invalid-argument', 'Missing required fields');
-//     }
-
-//     /**
-//      * props.data.user.id may need to be changed to allow for modularity
-//      * in the future. For now, it is set to 'const userId = 'user123';'
-//      * from the ChatWindow feature.
-//      */
-
-//     const fetchChatHistoryRef = async (userId = props.data.user.id) => {
-//       const q = query(
-//         collection(db, 'chatSessions'),
-//         where('userId', '==', userId)
-//       );
-//       const querySnapshot = await getDocs(q);
-//       const history = [];
-//       querySnapshot.forEach((doc) => {
-//         history.push({ id: doc.id, ...doc.data() });
-//       });
-//       // New
-//       // Potential loop to print chatHistoryData entities
-//       history.forEach((item) =>
-//         console.log(
-//           'id: ' +
-//             item.id +
-//             ', message: ' +
-//             item.message +
-//             ', timestamp: ' +
-//             item.timestamp
-//         )
-//       );
-//       return history;
-//     };
-
-//     DEBUG && logger.log('Fetch Chat History: ', fetchChatHistory);
-
-//     logger.log('Successfully communicated');
-//     return {
-//       status: 'created',
-//       data: fetchChatHistory,
-//     };
-//   } catch (error) {
-//     logger.error(error);
-//     throw new HttpsError('internal', error.message);
-//   }
-// });
