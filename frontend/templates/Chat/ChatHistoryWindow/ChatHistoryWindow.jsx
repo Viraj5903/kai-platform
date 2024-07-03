@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import moment from 'moment';
 
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { CircularProgress, Fab, Grid, Typography } from '@mui/material';
+import { Button, CircularProgress, Fab, Grid, Typography } from '@mui/material';
 
 import { useSelector } from 'react-redux';
 
@@ -10,24 +11,6 @@ import ChatHistory from '../ChatHistory';
 
 import styles from './styles';
 
-/**
- * Array of test data for chat history.
- * Each object represents a chat session with the following properties:
- * - createdAt: timestamp of when the chat session was created
- * - id: unique identifier for the chat session
- * - messages: array of messages in the chat session
- *   - payload: object containing details of a message
- *     - text: content of the message
- *     - role: role of the user who sent the message (either 'human' or 'ai')
- *     - timestamp: timestamp of when the message was sent
- *     - type: type of the message (e.g., 'text', 'image')
- * - type: type of the chat session
- * - updatedAt: timestamp of when the chat session was last updated
- * - user: object containing details of the user who participated in the chat session
- *   - email: email address of the user
- *   - fullName: full name of the user
- *   - id: unique identifier for the user
- */
 const testData = [
   {
     createdAt: 'Thu Jun 26 2024 10:19:32 GMT-0400 (Eastern Daylight Time)',
@@ -35,11 +18,9 @@ const testData = [
     messages: [
       {
         payload: {
-          // text: 'Hi Kai. I am Test.',
           text: 'Hi Kai. I am Test. How are you doing? I am fine what about you?',
           role: 'human',
-          timestamp:
-            'Thu Jun 27 2024 10:19:32 GMT-0400 (Eastern Daylight Time)',
+          timestamp: 'Thu Jun 27 2024 10:19:32 GMT-0400 (Eastern Daylight Time)',
           type: 'text',
         },
       },
@@ -47,8 +28,7 @@ const testData = [
         payload: {
           text: '👋 Hi Test! I am here to help you with any educational queries you may have. Feel free to ask me anything! 📚',
           role: 'ai',
-          timestamp:
-            'Thu Jun 27 2024 10:19:34 GMT-0400 (Eastern Daylight Time)',
+          timestamp: 'Thu Jun 27 2024 10:19:34 GMT-0400 (Eastern Daylight Time)',
           type: 'text',
         },
       },
@@ -69,8 +49,7 @@ const testData = [
         payload: {
           text: 'Hi Kai.',
           role: 'human',
-          timestamp:
-            'Thu Jun 27 2024 10:19:32 GMT-0400 (Eastern Daylight Time)',
+          timestamp: 'Thu Jun 27 2024 10:19:32 GMT-0400 (Eastern Daylight Time)',
           type: 'text',
         },
       },
@@ -78,8 +57,7 @@ const testData = [
         payload: {
           text: '👋 Hi Test! I am here to help you with any educational queries you may have. Feel free to ask me anything! 📚',
           role: 'ai',
-          timestamp:
-            'Thu Jun 27 2022 10:19:34 GMT-0400 (Eastern Daylight Time)',
+          timestamp: 'Thu Jun 27 2022 10:19:34 GMT-0400 (Eastern Daylight Time)',
           type: 'text',
         },
       },
@@ -94,59 +72,54 @@ const testData = [
   },
 ];
 
-/**
- * ChatHistoryWindow component displays a sidebar that contains chat history.
- * The sidebar is toggled by clicking on the toggle button.
- */
 const ChatHistoryWindow = () => {
-  // State variable to determine if the chat history sidebar is shown or hidden
   const [showHistorySidebar, setShowHistorySidebar] = useState(false);
-
+  const [selectedCategory, setSelectedCategory] = useState('Today');
   const historyLoaded = useSelector((state) => state.chat.historyLoaded);
 
-  /**
-   * Toggles the visibility of the chat history sidebar.
-   *
-   * @return {void} No return value.
-   */
   const toggleHistorySidebar = () => {
-    // Toggle the value of showHistorySidebar
     setShowHistorySidebar(!showHistorySidebar);
   };
 
-  /**
-   * chatHistoryLoader function returns a CircularProgress component to be used as a loader when chat history is being loaded.
-   *
-   * @return {JSX.Element} A CircularProgress component with specified props.
-   */
   const chatHistoryLoader = () => {
-    // Return a CircularProgress component with specified props
     return (
-      // Grid container with center aligned content
       <Grid container justifyContent="center" alignItems="center" height="100%">
-        {/* CircularProgress component with specified props */}
         <CircularProgress disableShrink size={75} color="primary" />
       </Grid>
     );
   };
 
+  const filterChatHistory = (category) => {
+    const now = moment();
+    switch (category) {
+      case 'Today':
+        return testData.filter(chat => moment(chat.createdAt).isSame(now, 'day'));
+      case 'Yesterday':
+        return testData.filter(chat => moment(chat.createdAt).isSame(now.clone().subtract(1, 'day'), 'day'));
+      case 'Previous Week':
+        return testData.filter(chat => moment(chat.createdAt).isBetween(now.clone().subtract(1, 'week').startOf('week'), now.clone().subtract(1, 'week').endOf('week')));
+      case 'Older Chat':
+        return testData.filter(chat => moment(chat.createdAt).isBefore(now.clone().subtract(1, 'week').startOf('week')));
+      default:
+        return testData;
+    }
+  };
+
+  const renderChatHistory = () => {
+    const filteredChats = filterChatHistory(selectedCategory);
+    return <ChatHistory history={filteredChats} />;
+  };
+
   return (
-    // This sidebar is positioned at the top right corner of the chat interface.
     <Grid {...styles.historySideBar(showHistorySidebar)}>
-      {/* Header of the sidebar */}
       <Grid {...styles.historySideBarHeader}>
-        {/* Title of the chat history sidebar */}
         <Grid {...styles.historySideBarTitle(showHistorySidebar)}>
-          {/* Display the title of the chat history sidebar */}
           <Typography {...styles.historySideBarTitleText}>
-            {/* Display 'Chat History' */}
             Chat History
           </Typography>
         </Grid>
         <Fab
-          aria-label={
-            showHistorySidebar ? 'close chat history' : 'open chat history'
-          }
+          aria-label={showHistorySidebar ? 'close chat history' : 'open chat history'}
           size="medium"
           onClick={toggleHistorySidebar}
           {...styles.toggleHistoryButton(showHistorySidebar)}
@@ -155,18 +128,15 @@ const ChatHistoryWindow = () => {
         </Fab>
       </Grid>
 
-      {/* Content of the chat history sidebar */}
       <Grid {...styles.historySideBarContent(showHistorySidebar)}>
-        {/* The chat history sidebar content is displayed based on the value of showHistorySidebar.
-          If showHistorySidebar is true, the sidebar is open and the content is displayed.
-          If showHistorySidebar is false, the sidebar is closed and the content is hidden. */}
-        {/* Render the chat history */}
-        {/* Pass the test data to the ChatHistory component */}
-        {historyLoaded ? ( // To stop the loading spinner just add ! before historyLoaded like !historyLoaded
-          <ChatHistory history={testData} />
-        ) : (
-          chatHistoryLoader()
-        )}
+        <Grid container direction="column">
+          <Button onClick={() => setSelectedCategory('Today')}>Today</Button>
+          <Button onClick={() => setSelectedCategory('Yesterday')}>Yesterday</Button>
+          <Button onClick={() => setSelectedCategory('Previous Week')}>Previous Week</Button>
+          <Button onClick={() => setSelectedCategory('Older Chat')}>Older Chat</Button>
+        </Grid>
+
+        {!historyLoaded ? renderChatHistory() : chatHistoryLoader()}
       </Grid>
     </Grid>
   );
