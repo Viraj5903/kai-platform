@@ -40,7 +40,7 @@ const ChatHistory = ({ history }) => {
    */
   const centerChatContentNoMessages = () => (
     <Grid {...styles.centerChatContentNoMessage}>
-      <Typography variant="h5">No chat history</Typography>
+      <Typography variant="p">No chat history</Typography>
     </Grid>
   );
 

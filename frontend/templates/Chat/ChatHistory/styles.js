@@ -34,7 +34,7 @@ const styles = {
     alignItems: 'center',
     sx: {
       width: '100%',
-      height: '100%',
+      height: '10%',
       textAlign: 'center',
     },
   },

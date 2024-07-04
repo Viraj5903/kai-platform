@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Button, CircularProgress, Fab, Grid, Typography } from '@mui/material';
+import { CircularProgress, Fab, Grid, Typography } from '@mui/material';
 
 import { useSelector } from 'react-redux';
 
@@ -74,7 +74,6 @@ const testData = [
 
 const ChatHistoryWindow = () => {
   const [showHistorySidebar, setShowHistorySidebar] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('Today');
   const historyLoaded = useSelector((state) => state.chat.historyLoaded);
 
   const toggleHistorySidebar = () => {
@@ -105,8 +104,8 @@ const ChatHistoryWindow = () => {
     }
   };
 
-  const renderChatHistory = () => {
-    const filteredChats = filterChatHistory(selectedCategory);
+  const renderChatHistory = (category) => {
+    const filteredChats = filterChatHistory(category);
     return <ChatHistory history={filteredChats} />;
   };
 
@@ -129,14 +128,20 @@ const ChatHistoryWindow = () => {
       </Grid>
 
       <Grid {...styles.historySideBarContent(showHistorySidebar)}>
-        <Grid container direction="column">
-          <Button onClick={() => setSelectedCategory('Today')}>Today</Button>
-          <Button onClick={() => setSelectedCategory('Yesterday')}>Yesterday</Button>
-          <Button onClick={() => setSelectedCategory('Previous Week')}>Previous Week</Button>
-          <Button onClick={() => setSelectedCategory('Older Chat')}>Older Chat</Button>
-        </Grid>
-
-        {!historyLoaded ? renderChatHistory() : chatHistoryLoader()}
+        {!historyLoaded ? (
+          <>
+            <Typography variant="h6">Today</Typography>
+            {renderChatHistory('Today')}
+            <Typography variant="h6">Yesterday</Typography>
+            {renderChatHistory('Yesterday')}
+            <Typography variant="h6">Previous Week</Typography>
+            {renderChatHistory('Previous Week')}
+            <Typography variant="h6">Older Chat</Typography>
+            {renderChatHistory('Older Chat')}
+          </>
+        ) : (
+          chatHistoryLoader()
+        )}
       </Grid>
     </Grid>
   );
