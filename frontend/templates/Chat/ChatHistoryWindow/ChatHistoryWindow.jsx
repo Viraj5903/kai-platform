@@ -13,7 +13,7 @@ import styles from './styles';
 
 const testData = [
   {
-    createdAt: 'Thu Jun 26 2024 10:19:32 GMT-0400 (Eastern Daylight Time)',
+    createdAt: 'Thu Jul 04 2024 10:19:32 GMT-0400 (Eastern Daylight Time)',
     id: 'H4yMmnuIJAfGT76YWnZ2',
     messages: [
       {
@@ -106,7 +106,14 @@ const ChatHistoryWindow = () => {
 
   const renderChatHistory = (category) => {
     const filteredChats = filterChatHistory(category);
-    return <ChatHistory history={filteredChats} />;
+    if (filteredChats.length === 0) return null;
+
+    return (
+      <>
+        <Typography variant="h6">{category}</Typography>
+        <ChatHistory history={filteredChats} />
+      </>
+    );
   };
 
   return (
@@ -130,13 +137,9 @@ const ChatHistoryWindow = () => {
       <Grid {...styles.historySideBarContent(showHistorySidebar)}>
         {!historyLoaded ? (
           <>
-            <Typography variant="h6">Today</Typography>
             {renderChatHistory('Today')}
-            <Typography variant="h6">Yesterday</Typography>
             {renderChatHistory('Yesterday')}
-            <Typography variant="h6">Previous Week</Typography>
             {renderChatHistory('Previous Week')}
-            <Typography variant="h6">Older Chat</Typography>
             {renderChatHistory('Older Chat')}
           </>
         ) : (
