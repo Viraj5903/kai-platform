@@ -84,13 +84,19 @@ const kaiCommunicator = async (payload) => {
  * @param {string} props.data.id - The id of the chat session.
  * @param {string} props.data.message - The message object.
  *
+ * @param {boolean} [props.data.quickAction] - Indicates if the QuickActionButton was pressed.
+ *
  * @return {object} The response object containing the status and data.
  */
 const chat = onCall(async (props) => {
   try {
     DEBUG && logger.log('Communicator started, data:', props.data);
 
-    const { message, id } = props.data;
+    const { message, id, quickAction } = props.data;
+
+    // const quickAction = true;
+    // let  quickAction = true;
+    // quickAction = props.data.quickAction;
 
     DEBUG &&
       logger.log(
@@ -119,23 +125,54 @@ const chat = onCall(async (props) => {
       truncatedMessages = messages.slice(messages.length - 65);
     }
 
-    // Update message structure here
-    const updatedMessages = truncatedMessages.concat([
-      {
-        ...message,
-        timestamp: Timestamp.fromMillis(Date.now()), // ISO 8601 format string
-      },
-    ]);
+    // Update message structure here ///NEW
+    let updatedMessages;
+
+    if (quickAction) {
+      // Update message structure for QuickActionButton
+      updatedMessages = truncatedMessages.concat([
+        {
+          ...message.Action,
+          timestamp: Timestamp.fromMillis(Date.now()), // ISO 8601 format string
+        },
+        {
+          ...message.Response,
+          timestamp: Timestamp.fromMillis(Date.now()), // ISO 8601 format string
+        },
+      ]);
+    } else {
+      // Standard update message structure
+      updatedMessages = truncatedMessages.concat([
+        {
+          ...message,
+          timestamp: Timestamp.fromMillis(Date.now()), // ISO 8601 format string
+        },
+      ]);
+    }
+    //  ****Update message structure here ///NEW
 
     await chatSession.ref.update({ messages: updatedMessages });
 
-    // Construct payload for the kaiCommunicator
-    const KaiPayload = {
-      messages: updatedMessages,
-      type,
-      user,
-    };
-
+    // Construct payload for the kaiCommunicator /// NEW
+    let KaiPayload;
+    if (quickAction) {
+      KaiPayload = {
+        messages: updatedMessages.map((msg) => ({
+          role: msg.role,
+          type: msg.type,
+          payload: msg.payload,
+        })),
+        type,
+        user,
+      };
+    } else {
+      KaiPayload = {
+        messages: updatedMessages,
+        type,
+        user,
+      };
+    }
+    // ****Construct payload for the kaiCommunicator /// NEW
     const response = await kaiCommunicator({
       data: KaiPayload,
     });
@@ -275,6 +312,7 @@ app.post('/api/tool/', (req, res) => {
  * @param {Object} props.data.user - The user object.
  * @param {Object} props.data.message - The message object.
  * @param {Object} props.data.type - The bot type.
+ * @param {boolean} [props.data.quickAction] - Indicates if the QuickActionButton was pressed.
  *
  * @return {Promise<Object>} - A promise that resolves to an object containing the status and data of the chat sessions.
  * @throws {HttpsError} Throws an error if there is an internal error.
@@ -283,24 +321,97 @@ const createChatSession = onCall(async (props) => {
   try {
     DEBUG && logger.log('Communicator started, data:', props.data);
 
-    const { user, message, type } = props.data;
+    const { user, message, type, quickAction } = props.data; // NEW quickAction boolean
 
     if (!user || !message || !type) {
       logger.log('Missing required fields', props.data);
       throw new HttpsError('invalid-argument', 'Missing required fields');
     }
 
-    const initialMessage = {
-      ...message,
-      timestamp: Timestamp.fromMillis(Date.now()),
-    };
+    // Validate and create initial message based on quickAction boolean
+    let initialMessage = [];
+
+    // If quickAction is true, validate Action and Response fields in message
+    if (quickAction) {
+      // Extract Action and Response fields from message
+      const { Action, Response } = message;
+
+      // Validate presence of Action and Response fields in message
+      if (!Action || !Response) {
+        logger.log('Missing Action or Response fields', message);
+        throw new HttpsError(
+          'invalid-argument',
+          'Missing Action or Response fields'
+        );
+      }
+
+      // Extract role, type, and payload fields from Action and Response // NEW
+      const {
+        role: actionRole,
+        type: actionType,
+        payload: actionPayload,
+      } = Action;
+      const {
+        role: responseRole,
+        type: responseType,
+        payload: responsePayload,
+      } = Response;
+
+      // Validate presence of role, type, and payload fields in Action and Response
+      if (
+        !actionRole ||
+        !actionType ||
+        !actionPayload ||
+        !responseRole ||
+        !responseType ||
+        !responsePayload
+      ) {
+        logger.log('Missing required fields in Action or Response', message);
+        throw new HttpsError(
+          'invalid-argument',
+          'Missing required fields in Action or Response'
+        );
+      }
+
+      // Create initial message with current timestamp
+      initialMessage = [
+        {
+          ...Action,
+          timestamp: Timestamp.fromMillis(Date.now()),
+        },
+        {
+          ...Response,
+          timestamp: Timestamp.fromMillis(Date.now()),
+        },
+      ];
+    } else {
+      // If quickAction is false, validate role, type, and payload fields in message
+      const { role, type: messageType, payload } = message;
+
+      // Validate presence of role, type, and payload fields in message
+      if (!role || !messageType || !payload) {
+        logger.log('Missing required fields in message', message);
+        throw new HttpsError(
+          'invalid-argument',
+          'Missing required fields in message'
+        );
+      }
+
+      // Create initial message with current timestamp
+      initialMessage = [
+        {
+          ...message,
+          timestamp: Timestamp.fromMillis(Date.now()),
+        },
+      ];
+    } // End of new initial message if else
 
     // Create new chat session if it doesn't exist
     const chatSessionRef = await admin
       .firestore()
       .collection('chatSessions')
       .add({
-        messages: [initialMessage],
+        messages: initialMessage, // NEW
         user,
         type,
         createdAt: Timestamp.fromMillis(Date.now()),
@@ -310,9 +421,10 @@ const createChatSession = onCall(async (props) => {
     // Send trigger message to ReX AI
     const response = await kaiCommunicator({
       data: {
-        messages: [initialMessage],
+        messages: initialMessage, // NEW
         user,
         type,
+        quickAction, // NEW
       },
     });
 
@@ -339,6 +451,7 @@ const createChatSession = onCall(async (props) => {
     await chatSessionRef.update({
       messages: updatedResponseMessages,
       id: chatSessionRef.id,
+      updatedAt: Timestamp.fromMillis(Date.now()), // NEW
     });
 
     const updatedChatSession = await chatSessionRef.get();
