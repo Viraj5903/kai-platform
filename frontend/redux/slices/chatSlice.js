@@ -20,6 +20,7 @@ const initialState = {
   historyLoaded: false,
   streamingDone: false,
   streaming: false,
+  displayQuickActions: false,
 };
 
 const chatSlice = createSlice({
@@ -125,6 +126,9 @@ const chatSlice = createSlice({
     setExerciseId: (state, action) => {
       state.exerciseId = action.payload;
     },
+    setDisplayQuickActions: (state, action) => {
+      state.displayQuickActions = action.payload;
+    },
   },
 });
 
@@ -151,6 +155,7 @@ export const {
   resetExplainMyAnswer,
   setStreaming,
   setHistoryLoaded,
+  setDisplayQuickActions,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

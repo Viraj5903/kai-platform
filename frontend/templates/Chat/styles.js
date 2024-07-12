@@ -214,7 +214,7 @@ const styles = {
         borderRadius: '50px',
       },
     }),
-    chatInputProps: (renderSendIcon, error, input) => ({
+    chatInputProps: (renderQuicKAction, renderSendIcon, error, input) => ({
       type: 'text',
       placeholder: !error && 'Send a message',
       autoComplete: 'off',
@@ -234,6 +234,7 @@ const styles = {
           lineHeight: '35px',
         }),
         endAdornment: renderSendIcon(),
+        startAdornment: renderQuicKAction(),
       },
       FormHelperTextProps: {
         sx: {

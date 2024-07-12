@@ -5,6 +5,8 @@ import {
   InfoOutlined,
   Settings,
 } from '@mui/icons-material';
+import AddIcon from '@mui/icons-material/Add';
+
 import {
   Button,
   Fade,
@@ -25,12 +27,14 @@ import { MESSAGE_ROLE, MESSAGE_TYPES } from '@/constants/bots';
 import CenterChatContentNoMessages from './CenterChatContentNoMessages';
 import ChatSpinner from './ChatSpinner';
 import Message from './Message';
+import QuickActions from './QuickActions';
 import styles from './styles';
 
 import {
   openInfoChat,
   resetChat,
   setChatSession,
+  setDisplayQuickActions,
   setError,
   setFullyScrolled,
   setInput,
@@ -61,6 +65,7 @@ const ChatInterface = () => {
     streamingDone,
     streaming,
     error,
+    displayQuickActions,
   } = useSelector((state) => state.chat);
   const { data: userData } = useSelector((state) => state.user);
 
@@ -330,10 +335,52 @@ const ChatInterface = () => {
     );
   };
 
+  /**
+   * Render the Quick Action component as an InputAdornment.
+   * This component is used to toggle the display of the Quick Actions.
+   *
+   * @return {JSX.Element} The rendered Quick Action component.
+   */
+  const renderQuickAction = () => {
+    // Render the Quick Action component as an InputAdornment.
+    return (
+      <InputAdornment position="start">
+        {/* The Grid component used to display the Quick Action. */}
+        <Grid
+          // Handle the click event to toggle the display of the Quick Actions.
+          onClick={() => dispatch(setDisplayQuickActions(!displayQuickActions))}
+          sx={{
+            padding: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            cursor: 'pointer',
+            backgroundColor: 'rgb(88,20,244)',
+            color: 'white',
+            borderRadius: '20px',
+            flexWrap: 'nowrap',
+            gap: '10px',
+          }}
+        >
+          {/* Render the AddIcon component. */}
+          <AddIcon
+            sx={{
+              border: '2px solid white',
+              borderRadius: '50%',
+            }}
+          />
+          {/* Render the Typography component to display the text. */}
+          <Typography>Actions</Typography>
+        </Grid>
+      </InputAdornment>
+    );
+  };
+
   const renderBottomChatContent = () => {
     if (!openSettingsChat && !infoChatOpened)
       return (
         <Grid {...styles.bottomChatContent.bottomChatContentGridProps}>
+          {/* Quick Actions Component */}
+          <QuickActions />
           <Grid {...styles.bottomChatContent.chatInputGridProps(!!error)}>
             <TextField
               value={input}
@@ -344,6 +391,7 @@ const ChatInterface = () => {
               disabled={!!error}
               focused={false}
               {...styles.bottomChatContent.chatInputProps(
+                renderQuickAction,
                 renderSendIcon,
                 !!error,
                 input
