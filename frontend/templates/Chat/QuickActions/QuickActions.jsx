@@ -26,7 +26,7 @@ const QuickActions = () => {
    */
   const quickActions = {
     // Description for the summarize quick action.
-    summarize: 'Summarize the topic',
+    summarize: 'Summarize the topic.',
     // Description for the suggestion quick action.
     suggestion: 'Suggest ways to learn interactive ways to learn to code.',
     // Description for the recommend_books quick action.

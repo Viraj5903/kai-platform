@@ -22,7 +22,9 @@ const styles = {
     container: true,
     item: true,
     sx: {
+      position: 'relative',
       padding: '5px 10px',
+      paddingLeft: '40px',
       flexDirection: 'row',
       flex: '1',
       backgroundColor: 'transparent',
@@ -30,6 +32,26 @@ const styles = {
       border: '2px solid rgb(88,20,244)',
       borderRadius: '10px',
       cursor: 'pointer',
+      transition: 'background-color 0.3s ease, color 0.3s ease',
+      '&:hover': {
+        backgroundColor: 'rgb(88,20,244)',
+        color: 'white',
+        '&::before': { // star transition
+          background: 'white', 
+          transition: 'background-color 0.3s ease, color 0.3s ease',
+        },
+      },
+      '&::before': { // star shape styling
+        content: '""',
+        position: 'absolute',
+        width: '23px',
+        height: '23px',
+        left: '8px',
+        top: '17px',
+        background: 'rgb(88,20,244)',
+        clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)', // CSS star shape
+        
+      },
     },
   },
   /**
