@@ -351,14 +351,19 @@ const ChatInterface = () => {
           onClick={() => dispatch(setDisplayQuickActions(!displayQuickActions))}
           sx={{
             padding: '10px',
+            marginLeft: '-5px',
             display: 'flex',
             alignItems: 'center',
             cursor: 'pointer',
             backgroundColor: 'rgb(88,20,244)',
             color: 'white',
-            borderRadius: '20px',
+            borderRadius: '30px',
             flexWrap: 'nowrap',
             gap: '10px',
+            transition: 'background-color 0.1s ease, color 0.1s ease',
+            '&:hover': {
+              backgroundColor: 'rgb(123, 55, 255)',
+            },
           }}
         >
           {/* Render the AddIcon component. */}

@@ -52,10 +52,11 @@ const styles = {
         top: '50%',
         transform: 'translateY(-50%)',
         background: '#5e20f4',
-        clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)', 
+        clipPath:
+          'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
       },
     },
-  },  
+  },
   /**
    * Styles for the text of a quick action
    */
