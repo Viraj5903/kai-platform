@@ -26,6 +26,7 @@ import { MESSAGE_ROLE, MESSAGE_TYPES } from '@/constants/bots';
 
 import CenterChatContentNoMessages from './CenterChatContentNoMessages';
 import ChatSpinner from './ChatSpinner';
+import DefaultPrompt from './DefaultPrompt';
 import Message from './Message';
 import QuickActions from './QuickActions';
 import styles from './styles';
@@ -33,6 +34,7 @@ import styles from './styles';
 import {
   openInfoChat,
   resetChat,
+  setActionType,
   setChatSession,
   setDisplayQuickActions,
   setError,
@@ -66,6 +68,7 @@ const ChatInterface = () => {
     streaming,
     error,
     displayQuickActions,
+    actionType,
   } = useSelector((state) => state.chat);
   const { data: userData } = useSelector((state) => state.user);
 
@@ -196,6 +199,7 @@ const ChatInterface = () => {
       type: MESSAGE_TYPES.TEXT,
       payload: {
         text: input,
+        action: actionType,
       },
     };
 
@@ -213,6 +217,8 @@ const ChatInterface = () => {
     dispatch(setTyping(true));
 
     await sendMessage({ message, id: sessionId }, dispatch);
+
+    dispatch(setActionType(null));
   };
 
   const handleQuickReply = async (option) => {
@@ -224,6 +230,7 @@ const ChatInterface = () => {
       type: MESSAGE_TYPES.QUICK_REPLY,
       payload: {
         text: option,
+        action: actionType,
       },
     };
 
@@ -235,6 +242,8 @@ const ChatInterface = () => {
     dispatch(setTyping(true));
 
     await sendMessage({ message, id: currentSession?.id }, dispatch);
+
+    dispatch(setActionType(null));
   };
 
   /* Push Enter */
@@ -349,30 +358,10 @@ const ChatInterface = () => {
         <Grid
           // Handle the click event to toggle the display of the Quick Actions.
           onClick={() => dispatch(setDisplayQuickActions(!displayQuickActions))}
-          sx={{
-            padding: '10px',
-            marginLeft: '-5px',
-            display: 'flex',
-            alignItems: 'center',
-            cursor: 'pointer',
-            backgroundColor: 'rgb(88,20,244)',
-            color: 'white',
-            borderRadius: '30px',
-            flexWrap: 'nowrap',
-            gap: '10px',
-            transition: 'background-color 0.1s ease, color 0.1s ease',
-            '&:hover': {
-              backgroundColor: 'rgb(123, 55, 255)',
-            },
-          }}
+          {...styles.quickActionButton}
         >
           {/* Render the AddIcon component. */}
-          <AddIcon
-            sx={{
-              border: '2px solid white',
-              borderRadius: '50%',
-            }}
-          />
+          <AddIcon {...styles.quickActionButtonAddIcon} />
           {/* Render the Typography component to display the text. */}
           <Typography>Actions</Typography>
         </Grid>
@@ -384,8 +373,10 @@ const ChatInterface = () => {
     if (!openSettingsChat && !infoChatOpened)
       return (
         <Grid {...styles.bottomChatContent.bottomChatContentGridProps}>
+          {/* Default Prompt Component */}
+          <DefaultPrompt handleSendMessage={handleSendMessage} />
           {/* Quick Actions Component */}
-          <QuickActions />
+          <QuickActions handleSendMessage={handleSendMessage} />
           <Grid {...styles.bottomChatContent.chatInputGridProps(!!error)}>
             <TextField
               value={input}

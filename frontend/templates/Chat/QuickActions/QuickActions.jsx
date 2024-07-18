@@ -1,58 +1,76 @@
+import { useEffect, useState } from 'react';
+
 import { ClickAwayListener, Grid, Typography } from '@mui/material';
 
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ACTION_TYPES } from '@/constants/bots';
+
 import styles from './styles';
 
-import { setDisplayQuickActions, setInput } from '@/redux/slices/chatSlice';
+import {
+  setActionType,
+  setDisplayQuickActions,
+  setInput,
+} from '@/redux/slices/chatSlice';
 
 /**
- * Renders the QuickActions component if open is true.
- * If open is false, returns null.
+ * QuickActions component that displays a list of quick actions that the user can select.
+ * If displayQuickActions is true, the QuickActions component is rendered.
+ * If displayQuickActions is false, null is returned.
  *
- * @return {JSX.Element|null} The QuickActions component or null.
+ * @param {function} handleSendMessage The function to handle sending a message when an action is selected.
+ * @return {JSX.Element|null} The QuickActions component or null if displayQuickActions is false.
  */
-const QuickActions = () => {
-  const displayQuickActions = useSelector(
-    (state) => state.chat.displayQuickActions // Selects the displayQuickActions property from the Redux store's chat state.
+const QuickActions = ({ handleSendMessage }) => {
+  // Get the state variables from Redux store
+  const { input, displayQuickActions, actionType } = useSelector(
+    (state) => state.chat
   );
+
+  // State variable to track whether the action is ready to be sent
+  const [readyToSend, setReadyToSend] = useState(false);
 
   // The function to dispatch Redux actions.
   const dispatch = useDispatch();
 
-  // For testing
-  /**
-   * Object containing quick actions with their corresponding descriptions.
-   */
-  const quickActions = {
-    // Description for the summarize quick action.
-    summarize: 'Summarize the topic.',
-    // Description for the suggestion quick action.
-    suggestion: 'Suggest ways to learn interactive ways to learn to code.',
-    // Description for the recommend_books quick action.
-    recommend_books:
-      'What books would you recommend for introduction to coding?',
-  };
+  // The list of quick action types.
+  const quickActions = ACTION_TYPES;
+
+  // Effect to handle sending the message when readyToSend is true
+  useEffect(() => {
+    if (readyToSend) {
+      handleSendMessage();
+
+      setReadyToSend(false);
+    }
+  }, [readyToSend]);
 
   /**
    * Handle action click event of the QuickActions component.
-   *
    * When an action is clicked, the QuickActions component is closed and the selected action is dispatched as input to the chat.
    *
    * @param {string} quickActionSelected The selected quick action.
    * @return {void}
    */
   const handleActionClick = (quickActionSelected) => {
+    // Construct the new input string
+    const newInput = `${input}\n\n${quickActions[quickActionSelected]}`;
+
+    // Dispatch the selected action as input to the chat
+    dispatch(setInput(newInput));
+
+    // Dispatch the selected action as the current action type
+    dispatch(setActionType(quickActions[quickActionSelected]));
+
     // Close the QuickActions component
     dispatch(setDisplayQuickActions(false));
 
-    // Dispatch the selected quick action as input to the chat
-    dispatch(setInput(quickActions[quickActionSelected]));
+    setReadyToSend(true);
   };
 
   /**
    * Handle close event of the QuickActions component.
-   *
    * Closes the QuickActions component by dispatching an action to Redux.
    *
    * @return {void}
@@ -82,12 +100,12 @@ const QuickActions = () => {
             <Grid
               key={key}
               onClick={() => handleActionClick(action)}
-              {...styles.quickAction}
+              {...styles.quickAction(
+                actionType && actionType === quickActions[action]
+              )}
             >
-              {/* Display the action text with a max height of 2 lines. The overflow is handled with ellipsis. */}
-              <Typography {...styles.quickActionText}>
-                {quickActions[action]}
-              </Typography>
+              {/* Render the name of the quick action */}
+              <Typography>{quickActions[action]}</Typography>
             </Grid>
           );
         })}

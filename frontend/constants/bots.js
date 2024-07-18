@@ -1,3 +1,10 @@
+const ACTION_TYPES = {
+  SUMMARIZE: 'Summarize',
+  TRANSLATE: 'Translate',
+  QUESTIONS: 'Question',
+  LENGTH: 'Length',
+};
+
 const BOT_TYPE = {
   MISSION: 'mission',
   TEACH_ME: 'teach_me',
@@ -22,4 +29,4 @@ const MESSAGE_TYPES = {
   QUICK_REPLY: 'quick_reply',
 };
 
-export { BOT_TYPE, MESSAGE_ROLE, MESSAGE_TYPES };
+export { ACTION_TYPES, BOT_TYPE, MESSAGE_ROLE, MESSAGE_TYPES };

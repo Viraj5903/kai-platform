@@ -6,69 +6,35 @@ const styles = {
    * Styles for the container of the quick actions
    */
   quickActionsGridContainer: {
-    container: true,
+    item: true,
     sx: {
-      width: '90%',
+      padding: '5px',
       display: 'flex',
       flexDirection: 'row',
       gap: '10px',
       marginBottom: '10px',
+      border: '3px solid #9f86fe',
+      borderRadius: '10px',
     },
   },
   /**
    * Styles for a single quick action
    */
-  quickAction: {
-    container: true,
+  quickAction: (selected) => ({
     item: true,
     sx: {
-      position: 'relative',
-      padding: '5px 10px',
-      paddingLeft: '40px',
-      display: 'flex',
-      flexDirection: 'row',
-      flex: '1',
-      backgroundColor: 'transparent',
-      color: '#5e20f4',
-      border: '2px solid #5e20f4',
+      padding: '10px',
+      backgroundColor: '#25262f',
+      color: selected ? '#9f86fe' : '#9e94a5',
+      border: selected ? '3px solid #9f86fe' : 'none',
       borderRadius: '10px',
       cursor: 'pointer',
-      alignItems: 'center',
       transition: 'background-color 0.3s ease, color 0.3s ease',
       '&:hover': {
-        backgroundColor: '#5e20f4',
-        color: 'white',
-        '&::before': {
-          background: 'white',
-          transition: 'background-color 0.3s ease, color 0.3s ease',
-        },
-      },
-      '&::before': {
-        content: '""',
-        position: 'absolute',
-        width: '23px',
-        height: '23px',
-        left: '8px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: '#5e20f4',
-        clipPath:
-          'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+        color: '#ffffff',
       },
     },
-  },
-  /**
-   * Styles for the text of a quick action
-   */
-  quickActionText: {
-    sx: {
-      display: '-webkit-box',
-      WebkitLineClamp: 2,
-      WebkitBoxOrient: 'vertical',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-    },
-  },
+  }),
 };
 
 export default styles;

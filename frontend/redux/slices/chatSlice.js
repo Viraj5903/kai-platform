@@ -21,6 +21,7 @@ const initialState = {
   streamingDone: false,
   streaming: false,
   displayQuickActions: false,
+  actionType: null,
 };
 
 const chatSlice = createSlice({
@@ -129,6 +130,9 @@ const chatSlice = createSlice({
     setDisplayQuickActions: (state, action) => {
       state.displayQuickActions = action.payload;
     },
+    setActionType: (state, action) => {
+      state.actionType = action.payload;
+    },
   },
 });
 
@@ -156,6 +160,7 @@ export const {
   setStreaming,
   setHistoryLoaded,
   setDisplayQuickActions,
+  setActionType,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;
