@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
+import ChatIcon from '@mui/icons-material/Chat';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Button, Fab, Grid, Typography } from '@mui/material';
+import { Button, Fab, Grid, Tooltip, Typography } from '@mui/material';
 
 import { useDispatch } from 'react-redux';
 
@@ -59,6 +60,17 @@ const ChatHistoryWindow = () => {
       <Grid {...styles.historySideBar}>
         {/* Header of the sidebar */}
         <Grid {...styles.historySideBarHeader}>
+          <Grid>
+            <Tooltip
+              title="Start a chat with Kai"
+              arrow
+              onClick={() => newChat()}
+            >
+              <Fab {...styles.newChatIcon} aria-label="Start a chat with Kai">
+                <ChatIcon />
+              </Fab>
+            </Tooltip>
+          </Grid>
           {/* Title of the chat history sidebar */}
           <Grid {...styles.historySideBarTitle}>
             {/* Display the title of the chat history sidebar */}
@@ -78,19 +90,19 @@ const ChatHistoryWindow = () => {
           </Fab>
         </Grid>
 
-        {/* Chat history section of the sidebar */}
-        <Grid {...styles.chatHistory}>
-          {/* Render the ChatHistory component */}
-          <ChatHistory />
-        </Grid>
-
         {/* Add new chat button */}
-        <Grid {...styles.newChatContainer}>
-          {/* Add new chat button with onClick event handler to reset the state of the chat reducer. */}
+        {/* Add new chat button with onClick event handler to reset the state of the chat reducer. */}
+        {/* <Grid {...styles.newChatContainer}>
           <Button {...styles.newChatButton} onClick={() => newChat()}>
             <AddIcon />
             <Typography>&nbsp;&nbsp;Start a new chat</Typography>
           </Button>
+        </Grid> */}
+
+        {/* Chat history section of the sidebar */}
+        <Grid {...styles.chatHistory}>
+          {/* Render the ChatHistory component */}
+          <ChatHistory />
         </Grid>
       </Grid>
     )

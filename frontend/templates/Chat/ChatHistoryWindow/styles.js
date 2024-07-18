@@ -37,8 +37,8 @@ const styles = {
       display: 'flex',
       // Set the flex direction to row.
       flexDirection: 'row',
-      // Align the children along the right edge of the header.
-      justifyContent: 'flex-end',
+      // Align the children along the space-around of the header.
+      justifyContent: 'space-around',
       // Align the children along the center of the header vertically.
       alignItems: 'center',
     },
@@ -103,6 +103,8 @@ const styles = {
       width: '100%',
       // Enable vertical scrolling if the content overflows
       overflowY: 'auto',
+      // Set the border radius.
+      borderRadius: '0px 0px 15px 15px',
       // Add a smooth transition when the sidebar is opened or closed
       transition: 'all 0.3s ease',
     },
@@ -123,7 +125,7 @@ const styles = {
       // Set the width of the container to 100%.
       width: '100%',
       // Set the padding of the container to 5px at the top and bottom.
-      padding: '5px 0',
+      // padding: '5px 0',
     },
   },
 
@@ -138,9 +140,28 @@ const styles = {
       justifyContent: 'space-around',
       // Set the color of the button to white.
       color: '#ffffff',
+      // Set the background color of the button to rgba(115,80,255,255).
+      backgroundColor: 'rgba(115,80,255,255)',
+      width: '100%',
       // Set the color of the button to white when hovered over.
       '&:hover': {
         color: '#ffffff',
+        backgroundColor: 'rgba(115,80,255,255)',
+      },
+    },
+  },
+  newChatIcon: {
+    sx: {
+      // Set the background color to black.
+      backgroundColor: '#000000',
+      // Set the text color to a custom color.
+      color: 'rgba(115,80,255,255)',
+      // Styles for the toggle history button when it is being hovered over.
+      '&:hover': {
+        // Set the background color to black on hover.
+        backgroundColor: '#000000',
+        // Set the text color on hover.
+        color: 'rgba(115,80,255,255)',
       },
     },
   },
