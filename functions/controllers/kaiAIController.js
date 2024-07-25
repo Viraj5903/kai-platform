@@ -92,8 +92,6 @@ const chat = onCall(async (props) => {
 
     const { message, id } = props.data;
 
-    console.log('Message :', message);
-
     DEBUG &&
       logger.log(
         'Communicator variables:',
@@ -309,7 +307,7 @@ const createChatSession = onCall(async (props) => {
         updatedAt: Timestamp.fromMillis(Date.now()),
       });
 
-    // Send trigger message to ReX AIWWWW
+    // Send trigger message to ReX AI
     const response = await kaiCommunicator({
       data: {
         messages: [initialMessage],

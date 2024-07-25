@@ -24,9 +24,7 @@ import {
  */
 const QuickActions = ({ handleSendMessage }) => {
   // Get the state variables from Redux store
-  const { input, displayQuickActions, actionType } = useSelector(
-    (state) => state.chat
-  );
+  const { input, displayQuickActions } = useSelector((state) => state.chat);
 
   // State variable to track whether the action is ready to be sent
   const [readyToSend, setReadyToSend] = useState(false);
@@ -55,13 +53,13 @@ const QuickActions = ({ handleSendMessage }) => {
    */
   const handleActionClick = (quickActionSelected) => {
     // Construct the new input string
-    const newInput = `${input}\n\n${quickActions[quickActionSelected]}`;
+    const newInput = `${input}\n\n${quickActionSelected.description}`;
 
     // Dispatch the selected action as input to the chat
     dispatch(setInput(newInput));
 
     // Dispatch the selected action as the current action type
-    dispatch(setActionType(quickActions[quickActionSelected]));
+    dispatch(setActionType(quickActionSelected.actionType));
 
     // Close the QuickActions component
     dispatch(setDisplayQuickActions(false));
@@ -93,19 +91,17 @@ const QuickActions = ({ handleSendMessage }) => {
       {/* Render the Grid container for the QuickActions component */}
       <Grid {...styles.quickActionsGridContainer}>
         {/* Render each quick action as a Grid item */}
-        {Object.keys(quickActions).map((action, key) => {
+        {Object.values(quickActions).map((action, key) => {
           // Generate a quick action component for each action
           // The quick action component is a Grid item that triggers the handleActionClick function when clicked
           return (
             <Grid
               key={key}
               onClick={() => handleActionClick(action)}
-              {...styles.quickAction(
-                actionType && actionType === quickActions[action]
-              )}
+              {...styles.quickAction}
             >
               {/* Render the name of the quick action */}
-              <Typography>{quickActions[action]}</Typography>
+              <Typography>{action.actionType}</Typography>
             </Grid>
           );
         })}

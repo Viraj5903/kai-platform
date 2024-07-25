@@ -4,6 +4,8 @@ import { Grid, Typography } from '@mui/material';
 
 import { useDispatch, useSelector } from 'react-redux';
 
+import { DEFAULT_PROMPTS } from '@/constants/bots';
+
 import styles from './styles';
 
 import { setInput } from '@/redux/slices/chatSlice';
@@ -51,12 +53,13 @@ const DefaultPrompt = ({ handleSendMessage }) => {
   }, [readyToSend]);
 
   // Define the default prompts
-  const defaultPrompts = [
+  const defaultPrompts = DEFAULT_PROMPTS;
+  /* const defaultPrompts = [
     'Help me sound like an expert for an upcoming meeting',
     'Suggest a way to organize my code in Github',
     'Brainstorm presentation ideas about a topic',
     'List power words for my resume that show teamwork',
-  ];
+  ]; */
 
   /**
    * Renders the default prompt component.

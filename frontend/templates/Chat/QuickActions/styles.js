@@ -20,13 +20,13 @@ const styles = {
   /**
    * Styles for a single quick action
    */
-  quickAction: (selected) => ({
+  quickAction: {
     item: true,
     sx: {
       padding: '10px',
       backgroundColor: '#25262f',
-      color: selected ? '#9f86fe' : '#9e94a5',
-      border: selected ? '3px solid #9f86fe' : 'none',
+      color: '#9e94a5',
+      border: 'none',
       borderRadius: '10px',
       cursor: 'pointer',
       transition: 'background-color 0.3s ease, color 0.3s ease',
@@ -34,7 +34,7 @@ const styles = {
         color: '#ffffff',
       },
     },
-  }),
+  },
 };
 
 export default styles;

@@ -1,8 +1,21 @@
 const ACTION_TYPES = {
-  SUMMARIZE: 'Summarize',
-  TRANSLATE: 'Translate',
-  QUESTIONS: 'Question',
-  LENGTH: 'Length',
+  SUMMARIZE_CONTENT: {
+    actionType: 'Summarize Content',
+    description: 'Summarize key concepts and ideas for a given topic.',
+  },
+  GENERATE_QUIZ: {
+    actionType: 'Generate Quiz',
+    description: 'Create quiz on a given topic to test students understanding.',
+  },
+  ACTIVITY_RECOMMENDATIONS: {
+    actionType: 'Activity Recommendations',
+    description: 'Offer engaging activities based on the current subject.',
+  },
+  INTERACTIVE_TECHNIQUES: {
+    actionType: 'Interactive Techniques',
+    description:
+      'Suggest ideas for making lessons more interactive and engaging.',
+  },
 };
 
 const BOT_TYPE = {
@@ -12,6 +25,12 @@ const BOT_TYPE = {
   PLAY_GAME: 'play_game',
   HACKATHON: 'hackathon',
 };
+
+const DEFAULT_PROMPTS = [
+  'Design an engaging class activity.',
+  'Recommend resources for effective teaching.',
+  'Strategies to encourage student participation.',
+];
 
 const MESSAGE_ROLE = {
   SYSTEM: 'system',
@@ -29,4 +48,4 @@ const MESSAGE_TYPES = {
   QUICK_REPLY: 'quick_reply',
 };
 
-export { ACTION_TYPES, BOT_TYPE, MESSAGE_ROLE, MESSAGE_TYPES };
+export { ACTION_TYPES, BOT_TYPE, DEFAULT_PROMPTS, MESSAGE_ROLE, MESSAGE_TYPES };
